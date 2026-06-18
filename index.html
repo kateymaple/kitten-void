@@ -266,12 +266,21 @@ const resorts = [
         priceAcre:'$22K–$30K', acreRange:'27 ac', distResort:'Paonia wine hub',
         livestock:'Horses, cattle', build:'4-bed home + horse barn + event space potential',
         house:{ beds:4, baths:2, sqft:null, note:'Well-positioned with scenic views' },
+        dwellings:[
+          { type:'Primary Home', beds:4, baths:2, sqft:null, desc:'Main residence with scenic views' },
+          { type:'Horse Barn', beds:0, desc:'With loft, hay storage, tack room' },
+          { type:'Garage', beds:0, desc:'Attached 2-car' }
+        ],
+        dwellingTier:3,
+        dwellingTierDesc:'Tier 3 — 1 primary home (4+ bed/3+ bath) + agricultural structures only',
         gapsToIdeal:[
           '❌ Only 27 acres (prefer ≥50 for true compound)',
-          '⚠️ Single existing home (need guest/family dwellings for compound)',
+          '❌ **DWELLING TIER 3** — Only 1 residential home (need Tier 1: 4 homes OR Tier 2: 2+ homes with separation)',
           '✅ Bell Creek year-round + irrigation',
           '✅ Horse barn + tack room ready',
-          '✅ Excellent motorboat access (30-35 min Ridgway)'
+          '✅ 4 bed/2 bath existing home',
+          '✅ Excellent motorboat access (30-35 min Ridgway)',
+          '📝 Would require 3 guest homes built for Tier 1'
         ],
         tags:['livestock','buildable','documented-water','motorboat','wedding-venue'],
         tagDefs:[{t:'Motorboat Access',cls:'blue'},{t:'Creek Access',cls:'green'},{t:'Wedding Venue',cls:'purple'}],
@@ -3202,6 +3211,8 @@ function buildListingDetailHtml(l) {
   const perAcre = (l.acres && priceNum) ? '$'+(Math.round(priceNum/l.acres)).toLocaleString() : 'See broker';
   const resortName = resorts.find(r => r.id === l.nearResort)?.name || '';
   const housingSummary = l.house ? `${l.house.beds ? l.house.beds + ' bed' : '?'} / ${l.house.baths ? l.house.baths + ' bath' : '?'}${l.house.sqft ? ' / ' + l.house.sqft.toLocaleString() + ' sqft' : ''}` : 'TBD';
+  const dwellingTierStyle = {1:'gold',2:'lightblue',3:'lightcoral',4:'lightgray'}[l.dwellingTier] || 'white';
+  const dwellingTierLabel = {1:'🏡🏡🏡🏡 Tier 1: 4+ Homes',2:'🏡🏡 Tier 2: 2-3 Homes',3:'🏡 Tier 3: 1 Home (4+ bed/3+ bath)',4:'🌾 Tier 4: Land Only'}[l.dwellingTier] || 'TBD';
   return `
     <button class="lp-modal-close" onclick="closeListingDetail()" title="Close">✕</button>
     <div class="lpd-header">
@@ -3224,7 +3235,8 @@ function buildListingDetailHtml(l) {
       <div class="lpd-metric"><strong>${typeof l.daysOnMarket === 'number' ? l.daysOnMarket : 'Unknown'}</strong>Days on Market</div>
       <div class="lpd-metric" style="grid-column:1/5"><strong>${l.avondaleDrive || l.phxDrive}</strong>From Avondale, AZ</div>
     </div>
-    ${l.house ? `<div class="lpd-section"><div class="lpd-label">🏠 Existing Home</div><div class="lpd-val"><strong>${housingSummary}</strong><br/><small>${l.house.note}</small></div></div>` : ''}
+    ${l.dwellingTier ? `<div class="lpd-section" style="background:${dwellingTierStyle}33;border-left:4px solid ${dwellingTierStyle};padding:10px;margin:10px 0;border-radius:4px;"><div class="lpd-label" style="font-weight:700;font-size:13px;">${dwellingTierLabel}</div><div class="lpd-val" style="font-size:12px;margin-top:4px;">${l.dwellingTierDesc}</div></div>` : ''}
+    ${l.dwellings ? `<div class="lpd-section"><div class="lpd-label">🏠 Existing Structures</div><div class="lpd-val"><ul style="margin:0;padding-left:20px;font-size:12px;line-height:1.8;">${l.dwellings.map(d => `<li><strong>${d.type}</strong>${d.beds ? ` (${d.beds} bed)` : ''}${d.baths ? ` (${d.baths} bath)` : ''} — ${d.desc}</li>`).join('')}</ul></div></div>` : ''}
     ${l.scoreReason ? `<div class="lpd-section"><div class="lpd-label">🎯 Why This Score</div><div class="lpd-val">${l.scoreReason}</div></div>` : ''}
     ${l.gapsToIdeal ? `<div class="lpd-section"><div class="lpd-label">📋 Gaps to Ideal</div><div class="lpd-val"><ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.6;">${l.gapsToIdeal.map(g => `<li>${g}</li>`).join('')}</ul></div></div>` : ''}
     ${astroProximity[l.id] ? `<div class="lpd-section"><div class="lpd-label">🔮 Astrocartography Proximity</div><div class="lpd-val">Within 300 mi of:</div>${astroProximityBadgesHtml(l.id)}</div>` : ''}
