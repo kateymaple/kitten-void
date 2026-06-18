@@ -1,0 +1,506 @@
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f7; color: #1a2536; height: 100vh; display: flex; flex-direction: column; }
+
+    header {
+      background: #fff;
+      padding: 11px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #dde3ef;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.07);
+      flex-shrink: 0;
+      z-index: 200;
+    }
+    header .logo { font-size: 24px; }
+    header h1 { font-size: 17px; font-weight: 700; color: #1a3060; }
+    header p { font-size: 11px; color: #7080a0; margin-top: 1px; }
+
+    .phx-toggle {
+      margin-left: auto;
+      background: #fff;
+      border: 2px solid #e09000;
+      border-radius: 8px;
+      color: #8a5c00;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .phx-toggle:hover, .phx-toggle.active {
+      background: #fff8e8;
+      border-color: #c07800;
+      color: #6a4400;
+    }
+    .phx-toggle.active { background: #fdf0cc; }
+
+    .mobile-view-toggle { display: none; gap: 6px; }
+    .mv-btn {
+      flex: 1;
+      background: #fff;
+      border: 2px solid #c8d0e0;
+      border-radius: 8px;
+      color: #5a6a88;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .mv-btn.active { background: #2a4088; border-color: #2a4088; color: #fff; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+    #map { flex: 1; z-index: 1; }
+
+    .sidebar {
+      width: 320px;
+      background: #fff;
+      overflow-y: auto;
+      border-left: 1px solid #dde3ef;
+      flex-shrink: 0;
+      box-shadow: -2px 0 8px rgba(0,0,0,0.04);
+    }
+
+    /* ── Mobile: single-view toggle (Map ⇄ List) ──────────────── */
+    @media (max-width: 768px) {
+      header { flex-wrap: wrap; padding: 10px 14px; }
+      header p { display: none; }
+      .header-listings-count { order: 2; margin-left: 0; }
+      .phx-toggle { order: 3; margin-left: 0; }
+      .mobile-view-toggle {
+        display: flex;
+        order: 4;
+        width: 100%;
+        margin-top: 8px;
+      }
+      .sidebar { display: none; width: 100%; border-left: none; }
+      body.mobile-list-active .sidebar { display: block; }
+      body.mobile-list-active #map { display: none; }
+    }
+
+    .phx-panel {
+      display: none;
+      background: linear-gradient(135deg, #fdf6e0, #fff8ed);
+      border-bottom: 2px solid #e8c060;
+      padding: 12px 14px;
+    }
+    .phx-panel.visible { display: block; }
+    .phx-panel h3 { font-size: 12px; font-weight: 700; color: #8a5c00; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .phx-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0dda0;
+      font-size: 12px;
+    }
+    .phx-row:last-child { border-bottom: none; }
+    .phx-resort-name { font-weight: 600; color: #3a2a00; display: flex; align-items: center; gap: 5px; }
+    .phx-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .phx-dist { color: #7a6030; font-size: 11px; text-align: right; }
+    .phx-dist strong { display: block; color: #5a4010; font-size: 12px; }
+
+    .sidebar-header {
+      padding: 12px 14px;
+      background: #f8f9fc;
+      border-bottom: 1px solid #dde3ef;
+      font-size: 11px;
+      font-weight: 700;
+      color: #3a5090;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+    }
+
+    .filter-bar {
+      padding: 8px 12px;
+      border-bottom: 1px solid #eef1f7;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      background: #fafbfd;
+    }
+    .filter-btn {
+      background: #fff;
+      border: 1px solid #c8d0e0;
+      border-radius: 5px;
+      color: #5a6a88;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 9px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover { background: #eef2fb; border-color: #6888cc; color: #2a4088; }
+    .filter-btn.active { background: #2a4088; border-color: #2a4088; color: #fff; }
+
+    .town-section { border-bottom: 1px solid #eef1f7; }
+    .town-header {
+      padding: 11px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: background 0.15s;
+    }
+    .town-header:hover { background: #f5f7fc; }
+    .town-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+    .town-name { font-size: 13px; font-weight: 700; flex: 1; color: #1a2536; }
+    .town-rank {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .town-chevron { font-size: 9px; color: #aab0c0; transition: transform 0.2s; }
+    .town-section.open .town-chevron { transform: rotate(90deg); }
+
+    .town-stats { display: none; padding: 0 14px 10px; gap: 6px; }
+    .town-section.open .town-stats { display: flex; }
+    .stat-pill {
+      background: #f4f6fb;
+      border: 1px solid #dde3ef;
+      border-radius: 6px;
+      padding: 5px 7px;
+      font-size: 9px;
+      color: #7080a0;
+      text-align: center;
+      flex: 1;
+    }
+    .stat-pill strong { display: block; font-size: 11px; color: #2a3a60; font-weight: 700; }
+
+    .properties-list { display: none; padding: 0 10px 10px; }
+    .town-section.open .properties-list { display: block; }
+
+    .property-card {
+      background: #fafbfd;
+      border: 1px solid #e0e6f0;
+      border-radius: 8px;
+      padding: 9px 11px;
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: all 0.16s;
+    }
+    .property-card:hover {
+      background: #eef2fb;
+      border-color: #7090cc;
+      box-shadow: 0 2px 7px rgba(40,80,180,0.08);
+      transform: translateX(2px);
+    }
+    .property-card.active { background: #e8eefb; border-color: #4a70cc; }
+    .property-name { font-size: 12px; font-weight: 700; color: #1a2848; margin-bottom: 2px; }
+    .property-meta { font-size: 10px; color: #8090b0; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .property-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+    .tag { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+    .tag.green { background: #e8f7ee; color: #2a7a4a; border: 1px solid #b8e0c8; }
+    .tag.gold { background: #fdf6e3; color: #8a6010; border: 1px solid #e8d080; }
+    .tag.blue { background: #e8eefb; color: #2a4898; border: 1px solid #b0c4e8; }
+    .tag.red { background: #fdf0ee; color: #9a3020; border: 1px solid #e8b8b0; }
+    .tag.gray { background: #f0f2f6; color: #5a6678; border: 1px solid #d0d6e0; }
+
+    /* Popup */
+    .leaflet-popup-content-wrapper {
+      background: #fff !important;
+      border: 1px solid #c8d4ec !important;
+      border-radius: 12px !important;
+      box-shadow: 0 8px 30px rgba(0,30,80,0.14) !important;
+    }
+    .leaflet-popup-tip { background: #fff !important; }
+    .leaflet-popup-content { margin: 13px 15px !important; min-width: 230px; max-width: 290px; max-height: 70vh; overflow-y: auto; }
+
+    .popup-header { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 9px; padding-bottom: 9px; border-bottom: 1px solid #eef1f7; }
+    .popup-icon { font-size: 22px; line-height: 1; margin-top: 2px; }
+    .popup-title { font-size: 14px; font-weight: 700; color: #1a2848; }
+    .popup-subtitle { font-size: 10px; color: #8090b0; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 1px; }
+    .popup-zoning { display: inline-block; font-size: 9px; padding: 2px 7px; border-radius: 3px; font-weight: 700; margin-top: 3px; background: #e8f7ee; color: #2a7a4a; border: 1px solid #b8e0c8; }
+
+    .popup-phx {
+      background: #fdf8e8;
+      border: 1px solid #e8d070;
+      border-radius: 7px;
+      padding: 7px 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .popup-phx-icon { font-size: 16px; }
+    .popup-phx-label { font-size: 10px; color: #8a6010; font-weight: 600; }
+    .popup-phx-val { font-size: 13px; font-weight: 700; color: #5a3800; }
+
+    .popup-desc { font-size: 11px; color: #4a5a78; line-height: 1.5; margin-bottom: 9px; }
+    .popup-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+    .popup-metric { background: #f4f6fb; border: 1px solid #dde3ef; border-radius: 5px; padding: 5px 7px; font-size: 9px; color: #7080a0; }
+    .popup-metric strong { display: block; font-size: 11px; color: #2a3a60; font-weight: 700; margin-bottom: 1px; }
+    .popup-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+    .popup-note { margin-top: 8px; padding: 7px 9px; background: #fdf8e8; border: 1px solid #e8d888; border-radius: 5px; font-size: 10px; color: #705010; line-height: 1.4; }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: #f4f6f9; }
+    .sidebar::-webkit-scrollbar-thumb { background: #c8d0e0; border-radius: 2px; }
+
+    /* ── Collapsible filter section ─────────────────────────── */
+    .filter-section { border-bottom: 2px solid #dde3ef; }
+    .filter-toggle {
+      width: 100%; background: #f0f3fa; border: none; border-bottom: 1px solid #dde3ef;
+      padding: 8px 12px; font-size: 11px; font-weight: 700; color: #2a4088;
+      cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      text-align: left; transition: background 0.15s;
+    }
+    .filter-toggle:hover { background: #e4e9f5; }
+    .filter-toggle .toggle-arrow { transition: transform 0.2s; display: inline-block; }
+    .filter-toggle.collapsed .toggle-arrow { transform: rotate(-90deg); }
+    .filter-body { display: block; }
+    .filter-body.hidden { display: none; }
+    .active-filter-badge {
+      background: #c62828; color: #fff; font-size: 9px; font-weight: 700;
+      border-radius: 8px; padding: 1px 6px; margin-left: 4px;
+    }
+
+    /* ── Generic filter bar ──────────────────────────────────── */
+    .filter-bar {
+      padding: 7px 12px 9px;
+      border-bottom: 1px solid #eef1f7;
+      background: #fafbfd;
+    }
+    .filter-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.7px; color: #8090a8; margin-bottom: 5px; display: block;
+    }
+    .filter-btn-row { display: flex; gap: 4px; flex-wrap: wrap; }
+    .filter-btn {
+      background: #fff; border: 1px solid #c8d0e0; border-radius: 5px;
+      color: #5a6a88; font-size: 10px; font-weight: 600;
+      padding: 4px 9px; cursor: pointer; transition: all 0.15s;
+    }
+    .filter-btn:hover { background: #eef2fb; border-color: #6888cc; color: #2a4088; }
+    .filter-btn.active { background: #2a4088; border-color: #2a4088; color: #fff; }
+
+    /* ── Resort dropdown ─────────────────────────────────────── */
+    #resortSelect, #stateSelect {
+      width: 100%; padding: 5px 8px; border: 1px solid #c8d0e0; border-radius: 5px;
+      font-size: 11px; color: #2a3a60; background: #fff; cursor: pointer;
+      font-weight: 600;
+    }
+    #resortSelect:focus, #stateSelect:focus { outline: none; border-color: #2a4088; }
+
+    /* ── Zone filter ─────────────────────────────────────────── */
+    .zone-filter-bar {
+      padding: 7px 12px 9px;
+      border-bottom: 1px solid #eef1f7;
+      background: #fafbfd;
+    }
+    .zone-filter-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.7px; color: #8090a8; margin-bottom: 5px; display: block;
+    }
+    .zone-btn-row { display: flex; gap: 4px; flex-wrap: wrap; }
+    .zone-btn {
+      background: #fff; border: 1px solid #c8d0e0; border-radius: 5px;
+      color: #5a6a88; font-size: 10px; font-weight: 600;
+      padding: 4px 9px; cursor: pointer; transition: all 0.15s;
+    }
+    .zone-btn:hover { background: #eef2fb; border-color: #6888cc; color: #2a4088; }
+    .zone-btn.active { background: #2a4088; border-color: #2a4088; color: #fff; }
+
+    /* ── Price / Acre / Days on Market / Score ───────────────── */
+    .price-filter-bar, .acre-filter-bar, .days-filter-bar, .score-filter-bar {
+      padding: 7px 12px 9px;
+      border-bottom: 1px solid #eef1f7;
+      background: #fafbfd;
+    }
+    .price-filter-label, .acre-filter-label, .days-filter-label, .score-filter-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.7px; color: #8090a8; margin-bottom: 5px; display: block;
+    }
+    .price-btn-row, .acre-btn-row, .days-btn-row, .score-btn-row { display: flex; gap: 4px; flex-wrap: wrap; }
+    .price-btn, .acre-btn, .days-btn, .score-btn {
+      background: #fff; border: 1px solid #c8d0e0; border-radius: 5px;
+      color: #5a6a88; font-size: 10px; font-weight: 600;
+      padding: 4px 9px; cursor: pointer; transition: all 0.15s;
+    }
+    .price-btn:hover, .acre-btn:hover, .days-btn:hover, .score-btn:hover { background: #eef2fb; border-color: #6888cc; color: #2a4088; }
+    .price-btn.active, .acre-btn.active, .days-btn.active, .score-btn.active { background: #2a4088; border-color: #2a4088; color: #fff; }
+
+    /* ── Favorite button ─────────────────────────────────────── */
+    .fav-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: none; border: none; cursor: pointer; font-size: 16px;
+      padding: 2px 4px; border-radius: 5px; transition: transform 0.15s;
+      line-height: 1;
+    }
+    .fav-btn:hover { transform: scale(1.2); }
+    .listing-card { position: relative; }
+
+    /* ── Resort filter old classes (keep for compat) ─────────── */
+    .resort-filter-bar { display: none; } /* replaced by filter-body */
+
+    /* Listings layer */
+    .list-toggle {
+      background: #fff;
+      border: 2px solid #2e7d32;
+      border-radius: 8px;
+      color: #1a5220;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+    .list-toggle:hover, .list-toggle.active { background: #e8f5e9; border-color: #1b5e20; color: #1b5e20; }
+    .list-toggle.active { background: #c8e6c9; }
+
+    .listings-panel-header {
+      padding: 12px 14px;
+      background: #e8f5e9;
+      border-bottom: 2px solid #a5d6a7;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1b5e20;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .listings-count {
+      background: #2e7d32;
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .header-listings-count {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .phx-toggle { margin-left: 0; }
+    .listing-card {
+      background: #fafffe;
+      border: 1px solid #c8e6c9;
+      border-radius: 9px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.16s;
+      position: relative;
+    }
+    .listing-card:hover {
+      background: #e8f5e9;
+      border-color: #4caf50;
+      box-shadow: 0 2px 8px rgba(46,125,50,0.12);
+      transform: translateX(2px);
+    }
+    .listing-card.active { background: #dcedc8; border-color: #388e3c; }
+    .score-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .score-a { background: #e8f5e9; color: #1b5e20; border: 2px solid #4caf50; }
+    .score-b { background: #e3f2fd; color: #0d47a1; border: 2px solid #2196f3; }
+    .score-c { background: #fff8e1; color: #e65100; border: 2px solid #ff9800; }
+    .listing-name { font-size: 12px; font-weight: 700; color: #1a3020; margin-bottom: 2px; padding-right: 38px; }
+    .listing-location { font-size: 10px; color: #4a6050; font-weight: 600; margin-bottom: 5px; }
+    .listing-resort-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .listing-highlights { font-size: 10px; color: #3a5040; line-height: 1.45; }
+    .listing-price { font-size: 11px; font-weight: 700; color: #1b5e20; margin-top: 5px; }
+    .listing-panels { display: none; padding: 10px 12px; }
+    .listing-panels.visible { display: block; }
+
+    /* Listing popup */
+    .lp-header { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; padding-bottom: 9px; border-bottom: 1px solid #e0f0e0; }
+    .lp-score { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+    .lp-title { font-size: 14px; font-weight: 700; color: #1a3020; }
+    .lp-county { font-size: 10px; color: #6080a0; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .lp-section { margin-bottom: 8px; }
+    .lp-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #8090a0; margin-bottom: 3px; }
+    .lp-val { font-size: 11px; color: #2a3040; line-height: 1.45; }
+    .lp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+    .lp-metric { background: #f4f6fb; border: 1px solid #dde3ef; border-radius: 5px; padding: 5px 7px; font-size: 9px; color: #7080a0; }
+    .lp-metric strong { display: block; font-size: 11px; color: #2a3a60; font-weight: 700; }
+    .lp-score-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .lp-bar-bg { flex: 1; height: 6px; background: #e0e8e0; border-radius: 3px; overflow: hidden; }
+    .lp-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #4caf50, #2e7d32); }
+    .lp-note { padding: 7px 9px; background: #f1f8e9; border: 1px solid #c5e1a5; border-radius: 5px; font-size: 10px; color: #33691e; line-height: 1.4; }
+    .lp-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 10px; font-weight: 700; color: #2e7d32; text-decoration: none; padding: 4px 9px; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 5px; }
+    .lp-link:hover { background: #c8e6c9; }
+    #listing-cards-direct { padding: 6px 10px 2px; }
+    #listing-cards-direct .listing-card { display: block; }
+    .resort-compact-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; cursor: pointer; border-bottom: 1px solid #edf0f7; transition: background 0.15s; }
+    .resort-compact-row:hover { background: #f4f6fb; }
+    .resort-compact-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .resort-compact-name { font-size: 12px; font-weight: 700; color: #1a2a4a; flex: 1; }
+    .resort-compact-rank { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 10px; white-space: nowrap; }
+
+    /* ── Hybrid popup: "View Full Details" button + full-detail modal ── */
+    .lp-detail-btn { display: block; width: 100%; margin-top: 8px; padding: 9px 0; background: #2e7d32; color: #fff; border: none; border-radius: 7px; font-size: 12px; font-weight: 800; cursor: pointer; text-align: center; letter-spacing: 0.2px; }
+    .lp-detail-btn:hover { background: #1b5e20; }
+    .lp-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,20,15,0.6); z-index: 5000; align-items: center; justify-content: center; padding: 4vh 3vw; }
+    .lp-modal-overlay.open { display: flex; }
+    .lp-modal { background: #fff; border-radius: 14px; width: 100%; max-width: 760px; max-height: 92vh; overflow-y: auto; padding: 30px 34px 34px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+    .lp-modal-close { position: absolute; top: 16px; right: 18px; width: 36px; height: 36px; border-radius: 50%; border: none; background: #f1f3f6; font-size: 18px; cursor: pointer; color: #4a5568; }
+    .lp-modal-close:hover { background: #e2e6ec; }
+    .lpd-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px; padding-bottom: 18px; padding-right: 30px; border-bottom: 2px solid #e0f0e0; }
+    .lpd-score { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; flex-shrink: 0; }
+    .lpd-title { font-size: 22px; font-weight: 800; color: #1a3020; margin-bottom: 4px; }
+    .lpd-county { font-size: 13px; color: #5a7090; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+    .lpd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .lpd-metric { background: #f4f6fb; border: 1px solid #dde3ef; border-radius: 8px; padding: 10px 8px; text-align: center; font-size: 11px; color: #7080a0; }
+    .lpd-metric strong { display: block; font-size: 15px; color: #2a3a60; font-weight: 800; margin-bottom: 2px; }
+    .lpd-photo { width: 100%; height: 280px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; display: block; }
+    .lpd-section { margin-bottom: 18px; }
+    .lpd-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: #6a8090; margin-bottom: 6px; }
+    .lpd-val { font-size: 14px; color: #2a3040; line-height: 1.65; }
+    .lpd-note { padding: 13px 15px; background: #f1f8e9; border: 1px solid #c5e1a5; border-radius: 8px; font-size: 13px; color: #33691e; line-height: 1.55; margin-bottom: 18px; }
+    .lpd-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 800; color: #fff; text-decoration: none; padding: 11px 20px; background: #2e7d32; border-radius: 8px; }
+    .lpd-link:hover { background: #1b5e20; }
+    @media (max-width: 640px) {
+      .lpd-grid { grid-template-columns: repeat(2,1fr); }
+      .lpd-title { font-size: 18px; }
+      .lp-modal { padding: 24px 18px 28px; }
+      .lpd-photo { height: 190px; }
+    }
+
+    /* ── Astrocartography sidebar controls ── */
+    .astro-person-row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid #edf0f7; }
+    .astro-person-row:last-child { border-bottom: none; }
+    .astro-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+    .astro-person-name { font-size: 11px; font-weight: 700; color: #1a2a4a; flex: 1; }
+    .astro-planet-toggle { display: flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 10px; cursor: pointer; border: 1.5px solid #d8dee8; color: #7080a0; background: #f8f9fc; user-select: none; }
+    .astro-planet-toggle.active { color: #fff; border-color: transparent; }
+    .astro-planet-toggle input { display: none; }
+  
