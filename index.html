@@ -3228,7 +3228,9 @@ function buildListingDetailHtml(l) {
   const priceNum = parseInt(l.price.replace(/[^0-9]/g,''));
   const perAcre = (l.acres && priceNum) ? '$'+(Math.round(priceNum/l.acres)).toLocaleString() : 'See broker';
   const resortName = resorts.find(r => r.id === l.nearResort)?.name || '';
-  const housingSummary = l.house ? `${l.house.beds ? l.house.beds + ' bed' : '?'} / ${l.house.baths ? l.house.baths + ' bath' : '?'}${l.house.sqft ? ' / ' + l.house.sqft.toLocaleString() + ' sqft' : ''}` : 'TBD';
+  const dwellingCount = l.dwellings ? l.dwellings.filter(d => d.beds > 0).length : 0;
+  const totalBeds = l.dwellings ? l.dwellings.reduce((sum, d) => sum + (d.beds || 0), 0) : (l.house?.beds || 0);
+  const totalBaths = l.dwellings ? l.dwellings.reduce((sum, d) => sum + (d.baths || 0), 0) : (l.house?.baths || 0);
   const dwellingTierStyle = {1:'gold',2:'lightblue',3:'lightcoral',4:'lightgray'}[l.dwellingTier] || 'white';
   const dwellingTierLabel = {1:'🏡🏡🏡🏡 Tier 1: 4+ Homes',2:'🏡🏡 Tier 2: 2-3 Homes',3:'🏡 Tier 3: 1 Home (4+ bed/3+ bath)',4:'🌾 Tier 4: Land Only'}[l.dwellingTier] || 'TBD';
   return `
@@ -3246,12 +3248,13 @@ function buildListingDetailHtml(l) {
     </div>
     ${l.photo ? `<img class="lpd-photo" src="${l.photo}" alt="${l.name}" onerror="this.style.display='none'">` : ''}
     <div class="lpd-grid">
+      <div class="lpd-metric"><strong>${l.price}</strong>Price</div>
       <div class="lpd-metric"><strong>${l.acres ? l.acres+' ac' : 'See broker'}</strong>Acreage</div>
-      <div class="lpd-metric"><strong>${l.price}</strong>List Price</div>
-      <div class="lpd-metric"><strong>${perAcre}</strong>$/Acre (est.)</div>
-      <div class="lpd-metric"><strong>${l.score}/100</strong>Compound Score</div>
+      <div class="lpd-metric"><strong>${perAcre}</strong>$/Acre</div>
+      <div class="lpd-metric"><strong>${dwellingCount}${l.dwellings ? ' homes' : ''}</strong>${dwellingCount > 0 ? 'Homes' : 'Structure(s)'}</div>
+      <div class="lpd-metric"><strong>${totalBeds} bed / ${totalBaths} bath</strong>Total Beds/Baths</div>
       <div class="lpd-metric"><strong>${typeof l.daysOnMarket === 'number' ? l.daysOnMarket : 'Unknown'}</strong>Days on Market</div>
-      <div class="lpd-metric" style="grid-column:1/5"><strong>${l.avondaleDrive || l.phxDrive}</strong>From Avondale, AZ</div>
+      <div class="lpd-metric" style="grid-column:1/7"><strong>${l.score}/100</strong>Compound Score</div>
     </div>
     ${l.dwellingTier ? `<div class="lpd-section" style="background:${dwellingTierStyle}33;border-left:4px solid ${dwellingTierStyle};padding:10px;margin:10px 0;border-radius:4px;"><div class="lpd-label" style="font-weight:700;font-size:13px;">${dwellingTierLabel}</div><div class="lpd-val" style="font-size:12px;margin-top:4px;">${l.dwellingTierDesc}</div></div>` : ''}
     ${l.dwellings ? `<div class="lpd-section"><div class="lpd-label">🏠 Existing Structures</div><div class="lpd-val"><ul style="margin:0;padding-left:20px;font-size:12px;line-height:1.8;">${l.dwellings.map(d => `<li><strong>${d.type}</strong>${d.beds ? ` (${d.beds} bed)` : ''}${d.baths ? ` (${d.baths} bath)` : ''} — ${d.desc}</li>`).join('')}</ul></div></div>` : ''}
