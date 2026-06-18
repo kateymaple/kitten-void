@@ -230,6 +230,14 @@ const resorts = [
         desc:'35 acres with 12 shares UVWUA irrigation water + 2 ponds. Year-round river access, prime vineyard soil, existing pasture. Ridgway Reservoir 25–30 min for waterskiing. Twin ponds enable compound expansion.',
         priceAcre:'$18K–$25K', acreRange:'35 ac', distResort:'North Fork Valley hub',
         livestock:'Horses, cattle, goats, sheep, poultry', build:'Primary + guest home + compound structures',
+        house:{ beds:null, baths:null, sqft:null, note:'Ranch-style with gourmet kitchen + wine-ready land' },
+        gapsToIdeal:[
+          '⚠️ 35 acres (below 50 ideal, but close)',
+          '✅ 2 ponds (excellent for compound expansion)',
+          '✅ 12 shares UVWUA irrigation + river access',
+          '✅ Motorboat access (25-30 min)',
+          '❓ Housing specs TBD (check Zillow)'
+        ],
         tags:['livestock','buildable','documented-water','motorboat','equestrian'],
         tagDefs:[{t:'Motorboat Access',cls:'blue'},{t:'Documented Water',cls:'green'},{t:'Vineyard Ready',cls:'gold'}],
         note:'✅ **BATCH 2 #9** — Excellent for Mom\'s compound vision. River + irrigation + ponds + Ridgway access.' },
@@ -239,6 +247,15 @@ const resorts = [
         desc:'29 acres with spring-fed pond (never runs dry) + year-round live water. Fiber optic installed. All-tile flooring with in-floor heat. 4 bedrooms, prime for equestrian/organic farming. Ridgway Reservoir 20–25 min.',
         priceAcre:'$20K–$28K', acreRange:'29 ac', distResort:'North Fork Valley',
         livestock:'Horses, cattle, livestock', build:'Renovated main + bunkhouse + barn',
+        house:{ beds:4, baths:3, sqft:2128, note:'Fully renovated, tile floor with in-floor heat, no HOA' },
+        gapsToIdeal:[
+          '⚠️ 29 acres (below 50 ideal)',
+          '✅ Spring-fed pond (drought-proof)',
+          '✅ Year-round live water + fiber optic',
+          '✅ 4 bed, 3 bath renovated home',
+          '✅ Motorboat access (20-25 min)',
+          '⚠️ No guest dwelling yet (but space available)'
+        ],
         tags:['livestock','buildable','documented-water','motorboat','equestrian'],
         tagDefs:[{t:'Motorboat Access',cls:'blue'},{t:'Spring-Fed Pond',cls:'green'},{t:'Renovated',cls:'gold'}],
         note:'✅ **BATCH 2 #11** — Spring-fed = no drought concerns. Low utilities. Perfect organic farming base.' },
@@ -248,6 +265,14 @@ const resorts = [
         desc:'27 acres in heart of North Fork Valley. Bell Creek year-round, irrigated hay + producing apple orchard, horse barn + tack room. 4-bed/2-bath home with scenic views. **Wedding venue candidate per prior eval (score 89)**. Ridgway Reservoir 30–35 min.',
         priceAcre:'$22K–$30K', acreRange:'27 ac', distResort:'Paonia wine hub',
         livestock:'Horses, cattle', build:'4-bed home + horse barn + event space potential',
+        house:{ beds:4, baths:2, sqft:null, note:'Well-positioned with scenic views' },
+        gapsToIdeal:[
+          '❌ Only 27 acres (prefer ≥50 for true compound)',
+          '⚠️ Single existing home (need guest/family dwellings for compound)',
+          '✅ Bell Creek year-round + irrigation',
+          '✅ Horse barn + tack room ready',
+          '✅ Excellent motorboat access (30-35 min Ridgway)'
+        ],
         tags:['livestock','buildable','documented-water','motorboat','wedding-venue'],
         tagDefs:[{t:'Motorboat Access',cls:'blue'},{t:'Creek Access',cls:'green'},{t:'Wedding Venue',cls:'purple'}],
         note:'✅ **BATCH 2 #13** — Year-round creek. Orchard + vineyard combo. High compound score. Event potential.' },
@@ -3176,6 +3201,7 @@ function buildListingDetailHtml(l) {
   const priceNum = parseInt(l.price.replace(/[^0-9]/g,''));
   const perAcre = (l.acres && priceNum) ? '$'+(Math.round(priceNum/l.acres)).toLocaleString() : 'See broker';
   const resortName = resorts.find(r => r.id === l.nearResort)?.name || '';
+  const housingSummary = l.house ? `${l.house.beds ? l.house.beds + ' bed' : '?'} / ${l.house.baths ? l.house.baths + ' bath' : '?'}${l.house.sqft ? ' / ' + l.house.sqft.toLocaleString() + ' sqft' : ''}` : 'TBD';
   return `
     <button class="lp-modal-close" onclick="closeListingDetail()" title="Close">✕</button>
     <div class="lpd-header">
@@ -3198,7 +3224,9 @@ function buildListingDetailHtml(l) {
       <div class="lpd-metric"><strong>${typeof l.daysOnMarket === 'number' ? l.daysOnMarket : 'Unknown'}</strong>Days on Market</div>
       <div class="lpd-metric" style="grid-column:1/5"><strong>${l.avondaleDrive || l.phxDrive}</strong>From Avondale, AZ</div>
     </div>
+    ${l.house ? `<div class="lpd-section"><div class="lpd-label">🏠 Existing Home</div><div class="lpd-val"><strong>${housingSummary}</strong><br/><small>${l.house.note}</small></div></div>` : ''}
     ${l.scoreReason ? `<div class="lpd-section"><div class="lpd-label">🎯 Why This Score</div><div class="lpd-val">${l.scoreReason}</div></div>` : ''}
+    ${l.gapsToIdeal ? `<div class="lpd-section"><div class="lpd-label">📋 Gaps to Ideal</div><div class="lpd-val"><ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.6;">${l.gapsToIdeal.map(g => `<li>${g}</li>`).join('')}</ul></div></div>` : ''}
     ${astroProximity[l.id] ? `<div class="lpd-section"><div class="lpd-label">🔮 Astrocartography Proximity</div><div class="lpd-val">Within 300 mi of:</div>${astroProximityBadgesHtml(l.id)}</div>` : ''}
     <div class="lpd-section"><div class="lpd-label">💧 Water</div><div class="lpd-val">${l.water}</div></div>
     ${l.lakeDist ? `<div class="lpd-section"><div class="lpd-label">⛵ Boating / Lake Recreation</div><div class="lpd-val">${l.lakeDist}</div></div>` : ''}
